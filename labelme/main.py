@@ -103,7 +103,14 @@ def main():
     if hasattr(args, 'labels'):
         if os.path.isfile(args.labels):
             with codecs.open(args.labels, 'r', encoding='utf-8') as f:
-                args.labels = [l.strip() for l in f if l.strip()]
+                lbls = []
+                for l in f:
+                    if l.find('#') >= 0:
+                        l = l[:l.find('#')]
+                    l = l.strip()
+                    if l:
+                        lbls.append(l)
+                args.labels = lbls
         else:
             args.labels = [l for l in args.labels.split(',') if l]
 
