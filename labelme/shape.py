@@ -193,7 +193,11 @@ class Shape(object):
         return post_i
 
     def containsPoint(self, point):
-        return self.makePath().contains(point)
+        try:
+            return self.makePath().contains(point)
+        except Exception as e:
+            print(e)
+            return False
 
     def getCircleRectFromLine(self, line):
         """Computes parameters to draw with `QPainterPath::addEllipse`"""
