@@ -134,15 +134,16 @@ class LabelDialog(QtWidgets.QDialog):
         # if text is None, the previous label in self.edit is kept
         if text is None:
             text = self.edit.text()
-        self.edit.setText(text)
-        self.edit.setSelection(0, len(text))
-        items = self.labelList.findItems(text, QtCore.Qt.MatchFixedString)
-        if items:
-            assert len(items) == 1
-            self.labelList.setCurrentItem(items[0])
-            row = self.labelList.row(items[0])
-            self.edit.completer().setCurrentRow(row)
-        self.edit.setFocus(QtCore.Qt.PopupFocusReason)
-        if move:
-            self.move(QtGui.QCursor.pos())
+        if text:
+            self.edit.setText(text)
+            self.edit.setSelection(0, len(text))
+            items = self.labelList.findItems(text, QtCore.Qt.MatchFixedString)
+            if items:
+                assert len(items) == 1
+                self.labelList.setCurrentItem(items[0])
+                row = self.labelList.row(items[0])
+                self.edit.completer().setCurrentRow(row)
+            self.edit.setFocus(QtCore.Qt.PopupFocusReason)
+            if move:
+                self.move(QtGui.QCursor.pos())
         return self.edit.text() if self.exec_() else None
