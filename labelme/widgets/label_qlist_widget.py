@@ -7,6 +7,7 @@ class LabelQListWidget(QtWidgets.QListWidget):
         super(LabelQListWidget, self).__init__(*args, **kwargs)
         self.canvas = None
         self.itemsToShapes = []
+        self.toggleSort(kwargs.get('sort', False))
 
     def get_shape_from_item(self, item):
         for index, (item_, shape) in enumerate(self.itemsToShapes):
@@ -24,6 +25,16 @@ class LabelQListWidget(QtWidgets.QListWidget):
 
     def setParent(self, parent):
         self.parent = parent
+
+    def toggleSort(self, value):
+        self.sortEnabled = value
+        if value:
+            self.setDragDropMode(
+                QtWidgets.QAbstractItemView.NoDragDrop)
+            self.sortItems()
+        else:
+            self.setDragDropMode(
+                QtWidgets.QAbstractItemView.InternalMove)
 
     def dropEvent(self, event):
         shapes = self.shapes
@@ -43,3 +54,21 @@ class LabelQListWidget(QtWidgets.QListWidget):
             shape = self.get_shape_from_item(item)
             shapes.append(shape)
         return shapes
+
+    def addItem(self, item):
+        retval = super(LabelQListWidget, self).addItem(item)
+        if self.sortEnabled:
+            self.sortItems()
+        return retval
+
+    def addItems(self, items):
+        retval = super(LabelQListWidget, self).addItems(items)
+        if self.sortEnabled:
+            self.sortItems()
+        return retval
+
+    def takeItem(self, index):
+        retval = super(LabelQListWidget, self).takeItem(index)
+        if self.sortEnabled:
+            self.sortItems()
+        return retval

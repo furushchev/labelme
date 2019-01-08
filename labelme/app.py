@@ -124,8 +124,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.labelList.itemDoubleClicked.connect(self.editLabel)
         # Connect to itemChanged to detect checkbox changes.
         self.labelList.itemChanged.connect(self.labelItemChanged)
-        self.labelList.setDragDropMode(
-            QtWidgets.QAbstractItemView.InternalMove)
         self.labelList.setParent(self)
         self.shape_dock = QtWidgets.QDockWidget('Polygon Labels', self)
         self.shape_dock.setObjectName('Labels')
@@ -388,6 +386,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         edit = action('&Edit Label', self.editLabel, shortcuts['edit_label'],
                       'edit', 'Modify the label of the selected polygon',
                       enabled=False)
+        sortLabels = action('Toggle &Sort', self.toggleSortLabels,
+                            shortcuts['sort_labels'],
+                            tip='Sort labels by alphabetical order',
+                            checkable=True, enabled=True)
 
         shapeLineColor = action(
             'Shape &Line Color', self.chshapeLineColor, icon='color-line',
@@ -408,7 +410,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         # Lavel list context menu.
         labelMenu = QtWidgets.QMenu()
-        addActions(labelMenu, (edit, delete))
+        addActions(labelMenu, (edit, delete, sortLabels))
         self.labelList.setContextMenuPolicy(Qt.CustomContextMenu)
         self.labelList.customContextMenuRequested.connect(
             self.popLabelListMenu)
@@ -420,7 +422,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             save=save, saveAs=saveAs, open=open_, close=close,
             lineColor=color1, fillColor=color2,
             toggleKeepPrevMode=toggle_keep_prev_mode,
-            delete=delete, edit=edit, copy=copy,
+            delete=delete, edit=edit, copy=copy, sortLabels=sortLabels,
             undoLastPoint=undoLastPoint, undo=undo,
             addPoint=addPoint,
             createMode=createMode, editMode=editMode,
@@ -830,6 +832,12 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             self.uniqLabelList.addItem(text)
             self.uniqLabelList.sortItems()
 
+    def toggleSortLabels(self, value=False):
+        if not self.canvas.editing():
+            return
+        self.labelList.toggleSort(value)
+        self.setDirty()
+
     def fileSearchChanged(self):
         self.importDirImages(
             self.lastOpenDir,
@@ -866,6 +874,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.actions.delete.setEnabled(selected)
         self.actions.copy.setEnabled(selected)
         self.actions.edit.setEnabled(selected)
+        self.actions.sortLabels.setEnabled(selected)
         self.actions.shapeLineColor.setEnabled(selected)
         self.actions.shapeFillColor.setEnabled(selected)
 

@@ -71,6 +71,7 @@ shortcuts:
   undo: Ctrl+Z
   undo_last_point: [Ctrl+Z, Backspace]
   edit_label: Ctrl+E
+  sort_labels: Ctrl+Shift+R
   edit_line_color: Ctrl+L
   edit_fill_color: Ctrl+Shift+L
   toggle_keep_prev_mode: Ctrl+P
